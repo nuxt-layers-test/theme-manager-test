@@ -4,7 +4,10 @@
       <NuxtLink to="/" class="flex items-center gap-step-sm font-semibold text-pen-base-default no-underline focus-visible:outline-focus focus-visible:outline-edge-base-focus">
         <TestBrand />
       </NuxtLink>
-      <NuxtLink to="/admin" class="rounded-control border border-edge-primary-default bg-fill-primary-default px-step-sm py-step-xs font-medium text-pen-primary-default no-underline hover:border-edge-primary-hover hover:bg-fill-primary-hover hover:text-pen-primary-hover focus-visible:outline-focus focus-visible:outline-edge-primary-focus">Enter test area</NuxtLink>
+      <div class="flex flex-wrap items-center justify-end gap-step-sm">
+        <TestAppearanceMenu />
+        <NuxtLink to="/admin" class="rounded-control border border-edge-primary-default bg-fill-primary-default px-step-sm py-step-xs font-medium text-pen-primary-default no-underline hover:border-edge-primary-hover hover:bg-fill-primary-hover hover:text-pen-primary-hover focus-visible:outline-focus focus-visible:outline-edge-primary-focus">Enter test area</NuxtLink>
+      </div>
     </header>
     <main id="main-content" class="mx-auto max-w-5xl p-step-lg md:p-step-2xl">
       <section class="space-y-step-md" aria-labelledby="home-title">
