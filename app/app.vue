@@ -10,7 +10,7 @@
         <button class="test-icon-button rounded-control px-step-xs py-step-2xs test-sidebar__collapse border-edge-base-default bg-fill-base-default text-pen-base-default hover:border-edge-base-hover hover:bg-fill-base-hover hover:text-pen-base-hover focus-visible:outline-focus focus-visible:outline-offset-focus focus-visible:outline-edge-base-focus" type="button" :aria-label="collapsed ? 'Expand sidebar' : 'Collapse sidebar'" :aria-expanded="!collapsed" @click="collapsed = !collapsed">
           {{ collapsed ? '»' : '«' }}
         </button>
-        <button class="test-icon-button rounded-control px-step-xs py-step-2xs test-sidebar__close border-edge-base-default bg-fill-base-default text-pen-base-default hover:border-edge-base-hover hover:bg-fill-base-hover hover:text-pen-base-hover focus-visible:outline-focus focus-visible:outline-offset-focus focus-visible:outline-edge-base-focus" type="button" aria-label="Close navigation" @click="mobileOpen = false">×</button>
+        <button v-if="mobileOpen" class="test-icon-button rounded-control px-step-xs py-step-2xs test-sidebar__close border-edge-base-default bg-fill-base-default text-pen-base-default hover:border-edge-base-hover hover:bg-fill-base-hover hover:text-pen-base-hover focus-visible:outline-focus focus-visible:outline-offset-focus focus-visible:outline-edge-base-focus" type="button" aria-label="Close navigation" @click="mobileOpen = false">×</button>
       </div>
       <nav class="test-nav gap-step-2xs" aria-label="Capability navigation">
         <NuxtLink to="/admin" class="test-nav__link gap-step-sm rounded-control p-step-sm text-pen-base-default hover:bg-fill-base-hover hover:text-pen-base-hover focus-visible:outline-focus focus-visible:outline-offset-focus focus-visible:outline-edge-base-focus" active-class="test-nav__link--active bg-fill-primary-selected text-pen-primary-selected border-edge-primary-selected" exact-active-class="test-nav__link--active bg-fill-primary-selected text-pen-primary-selected border-edge-primary-selected" @click="mobileOpen = false">
@@ -82,7 +82,7 @@ const themeManagerLogoFailed = ref(false)
   .test-sidebar{position:fixed;left:0;top:0;transform:translateX(-100%);transition:transform .2s;width:16rem;min-width:16rem}
   .test-sidebar--open{transform:translateX(0)}
   .test-sidebar--open .test-sidebar__collapse{display:none}
-  .test-sidebar__close,.test-mobile-toggle{display:inline-flex}
+  .test-sidebar--open .test-sidebar__close,.test-mobile-toggle{display:inline-flex}
   .test-backdrop{display:block;position:fixed;inset:0;border:0;z-index:10}
 }
 @media(prefers-reduced-motion:reduce){.test-sidebar{transition:none}}
