@@ -7,6 +7,8 @@ const management = useThemeManagement()
 const { preference } = useTestColourMode()
 const open = ref(false)
 const root = ref<HTMLElement | null>(null)
+const trigger = ref<HTMLButtonElement | null>(null)
+const panelStyle = ref<Record<string, string>>({})
 const route = useRoute()
 const panelId = useId()
 const loading = ref(false)
@@ -28,7 +30,27 @@ async function refreshThemes() {
 }
 async function toggle() {
   open.value = !open.value
-  if (open.value) await refreshThemes()
+  if (open.value) {
+    positionPanel()
+    await refreshThemes()
+  }
+}
+function positionPanel() {
+  if (!open.value || !trigger.value) return
+  const rect = trigger.value.getBoundingClientRect()
+  const padding = 16
+  const width = Math.max(0, Math.min(288, window.innerWidth - padding * 2))
+  const left = Math.max(padding, Math.min(rect.right - width, window.innerWidth - padding - width))
+  const top = rect.bottom + 8
+  panelStyle.value = {
+    position: 'fixed',
+    left: `${left}px`,
+    top: `${top}px`,
+    width: `${width}px`,
+    maxWidth: 'none',
+    maxHeight: `${Math.max(0, window.innerHeight - top - padding)}px`,
+    overflowY: 'auto',
+  }
 }
 async function chooseTheme(event: Event) {
   const id = (event.target as HTMLSelectElement).value
@@ -55,19 +77,23 @@ watch(() => route.fullPath, () => { open.value = false })
 onMounted(() => {
   document.addEventListener('click', outside)
   document.addEventListener('keydown', keydown)
+  window.addEventListener('resize', positionPanel)
+  window.addEventListener('scroll', positionPanel, true)
 })
 onBeforeUnmount(() => {
   document.removeEventListener('click', outside)
   document.removeEventListener('keydown', keydown)
+  window.removeEventListener('resize', positionPanel)
+  window.removeEventListener('scroll', positionPanel, true)
 })
 </script>
 
 <template>
   <div ref="root" class="relative">
-    <button type="button" class="rounded-control border border-edge-input-default bg-fill-input-default px-step-sm py-step-xs text-pen-input-default hover:border-edge-input-hover hover:bg-fill-input-hover hover:text-pen-input-hover focus-visible:outline-focus focus-visible:outline-edge-input-focus" :aria-expanded="open" :aria-controls="panelId" @click="toggle">
+    <button ref="trigger" type="button" class="rounded-control border border-edge-input-default bg-fill-input-default px-step-sm py-step-xs text-pen-input-default hover:border-edge-input-hover hover:bg-fill-input-hover hover:text-pen-input-hover focus-visible:outline-focus focus-visible:outline-edge-input-focus" :aria-expanded="open" :aria-controls="panelId" @click="toggle">
       Appearance <span aria-hidden="true">{{ open ? '▴' : '▾' }}</span>
     </button>
-    <div v-if="open" :id="panelId" class="test-appearance-panel absolute right-0 top-full z-40 mt-step-xs w-72 max-w-[calc(100vw-2rem)] space-y-step-md rounded-panel border border-edge-base-default bg-fill-base-default p-step-md text-pen-base-default shadow-lg">
+    <div v-if="open" :id="panelId" :style="panelStyle" class="z-40 space-y-step-md rounded-panel border border-edge-base-default bg-fill-base-default p-step-md text-pen-base-default shadow-lg">
       <label class="block text-label font-semibold" for="test-theme-select">Theme</label>
       <select id="test-theme-select" class="mt-step-xs w-full rounded-control border border-edge-input-default bg-fill-input-default p-step-xs text-pen-input-default" :disabled="loading" :value="runtime.selectedThemeId.value ?? ''" @change="chooseTheme">
         <option value="">Default Theme</option>
@@ -84,19 +110,3 @@ onBeforeUnmount(() => {
   </div>
 </template>
 
-<style scoped>
-/* Keep the toolbar popover inside the viewport on narrow screens. */
-@media (max-width: 639px) {
-  .test-appearance-panel {
-    position: fixed;
-    top: 5.5rem;
-    left: 1rem;
-    right: 1rem;
-    width: auto;
-    max-width: none;
-    max-height: calc(100dvh - 6.5rem);
-    margin-top: 0;
-    overflow-y: auto;
-  }
-}
-</style>
